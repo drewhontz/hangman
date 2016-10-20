@@ -39,7 +39,7 @@ class HangmanAPI(remote.Service):
         if not user:
             raise endpoints.NotFoundException('User does not exist')
         game = Game.new_game(user.key)
-        # game.put()
+        game.put()
         return game.to_form()
 
 

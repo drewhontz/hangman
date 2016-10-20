@@ -11,14 +11,14 @@ class Game(ndb.Model):
     """Game object"""
     user_name = ndb.KeyProperty(required=True, kind="User")
     remaining_attempts =  ndb.IntegerProperty(default=6)
-    target = ndb.StringProperty()
-    guessed_letters = ndb.StringProperty()
-    matched_letters = ndb.StringProperty()
+    target = ndb.StringProperty(default=randomWord())
+    guessed_letters = ndb.StringProperty(default="")
+    matched_letters = ndb.StringProperty(default="")
 
     @classmethod
     def new_game(self, user):
         """Creates a new game for a given user"""
-        game = Game(user_name=user) # TODO fill in the rest later
+        game = Game(user_name=user)
         return game
 
     @classmethod
