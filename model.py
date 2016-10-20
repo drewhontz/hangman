@@ -3,8 +3,8 @@ from google.appengine.ext import ndb
 
 class User(ndb.Model):
     """User object"""
-    user_name = messages.StringField(1)
-    email_address = messages.StringField(2)
+    user_name = ndb.StringProperty(required=True)
+    email_address = ndb.StringProperty()
 
 class StringMessage(messages.Message):
     """Convenience class for single line responses"""
