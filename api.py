@@ -3,7 +3,7 @@
 
 import endpoints
 from protorpc import remote, messages
-from model import User, StringMessage
+from model import User, Game, StringMessage, GameMessage
 
 USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
                                            email_address=messages.StringField(2))
@@ -38,8 +38,8 @@ class HangmanAPI(remote.Service):
         user = User.query(User.user_name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException('User does not exist')
-        game = Game.new_game(user)
-        game.put()
+        game = Game.new_game(user.key)
+        # game.put()
         return game.to_form()
 
 
