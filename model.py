@@ -41,7 +41,7 @@ class Game(ndb.Model):
             game__9=printFill(),
             grass___=printGrass(),
             guesses=printSpaces(self),
-            zspaces="" # printGuesses(self)
+            zspaces=printGuesses(self)
         )
 
 class StringMessage(messages.Message):

@@ -31,7 +31,10 @@ def printSpaces(game):
         if c == " ":
             returnStr += "  "
         else:
-            returnStr += "_ "
+            # if c in guesses:
+            #     returnStr += c + " "
+            # else:
+                returnStr += "_ "
     return returnStr
 
 def printTop():
