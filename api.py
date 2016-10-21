@@ -10,13 +10,8 @@ NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1)
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
     """Hangman API"""
-    @endpoints.method(
-        USER_REQUEST,
-        StringMessage,
-        path='user',
-        http_method='POST',
-        name='create_new_user'
-    )
+    @endpoints.method(USER_REQUEST, StringMessage, path='user',
+        http_method='POST', name='create_new_user')
     def create_user(self, request):
         """Create a new user for Hangman"""
         if User.query(User.user_name == request.user_name).get():
@@ -29,13 +24,8 @@ class HangmanAPI(remote.Service):
             format(request.user_name))
 
 
-    @endpoints.method(
-        NEW_GAME_REQUEST,
-        GameMessage,
-        path='game',
-        http_method='POST',
-        name='create_game'
-    )
+    @endpoints.method(NEW_GAME_REQUEST, GameMessage, path='game',
+        http_method='POST', name='create_game')
     def create_game(self, request):
         """Creates a new game for Hangman users"""
         user = User.query(User.user_name == request.user_name).get()
@@ -44,6 +34,15 @@ class HangmanAPI(remote.Service):
         game = Game.new_game(user.key)
         game.put()
         return game.to_form()
+
+
+    @endpoints.method(MOVE_REQUEST, GameMessage, path="game",
+        http_method='POST', name="guess_a_letter")
+    def guess_a_letter(self, request):
+        """Allows user to guess at the secret word"""
+        # gets game, checks if it is over, adds to the guess array or to the
+        # match string if the guess has a match, decrements score accordingly
+        # returns game status
 
 
 api = endpoints.api_server([HangmanAPI])
