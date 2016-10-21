@@ -35,7 +35,7 @@ class HangmanAPI(remote.Service):
         if not user:
             raise endpoints.NotFoundException('User does not exist')
         game = Game.new_game(user.key)
-        return game.to_form()
+        return game.to_form(game.remaining_attempts)
 
 
     @endpoints.method(MOVE_REQUEST, GameMessage, path="game/{urlsafe_game_key}",
@@ -43,16 +43,17 @@ class HangmanAPI(remote.Service):
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
-        if request.guess in game.target:
-            game.matched_letters += request.guess
+        guess = request.guess
+        secret = game.target
+        if guess in secret:
+            game.matched_letters += guess
         else:
-            game.guessed_letters += request.guess
+            game.guessed_letters += guess
             game.remaining_attempts -= 1
+            if game.remaining_attempts == 0:
+                game.over = True
         game.put()
-        return game.to_form()
-        # gets game, checks if it is over, adds to the guess array or to the
-        # match string if the guess has a match, decrements score accordingly
-        # returns game status
+        return game.to_form(game.remaining_attempts)
 
 
     @endpoints.method(ScoreTable, path="scores",

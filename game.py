@@ -44,6 +44,9 @@ def printSpaces(game):
                 returnStr += c + " "
             else:
                 returnStr += "_ "
+    if returnStr == target:
+        game.over = true
+        game.put()
     return returnStr
 
 def printTop():
