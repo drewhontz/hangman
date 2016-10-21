@@ -9,9 +9,10 @@ class User(ndb.Model):
 
 class Game(ndb.Model):
     """Game object"""
+    secret = randomWord()
     user_name = ndb.KeyProperty(required=True, kind="User")
     remaining_attempts =  ndb.IntegerProperty(default=6)
-    target = ndb.StringProperty(default=randomWord())
+    target = ndb.StringProperty(default=secret)
     guessed_letters = ndb.StringProperty(default="")
     matched_letters = ndb.StringProperty(default="")
 
@@ -34,7 +35,9 @@ class Game(ndb.Model):
             game__7=printFill(),
             game__8=printFill(),
             game__9=printFill(),
-            grass___=printGrass()
+            grass___=printGrass(),
+            guesses=printSpaces(self),
+            zspaces="" # printGuesses(self)
         )
 
 class StringMessage(messages.Message):
@@ -53,3 +56,5 @@ class GameMessage(messages.Message):
     game__8 = messages.StringField(8, required=True)
     game__9 = messages.StringField(9, required=True)
     grass___ = messages.StringField(10, required=True)
+    guesses = messages.StringField(11, required=True)
+    zspaces = messages.StringField(12, required=True)

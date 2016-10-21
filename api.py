@@ -1,6 +1,4 @@
 """ Creation of the Hangman API. """
-
-
 import endpoints
 from protorpc import remote, messages
 from model import User, Game, StringMessage, GameMessage
@@ -20,11 +18,15 @@ class HangmanAPI(remote.Service):
         name='create_new_user'
     )
     def create_user(self, request):
+        """Create a new user for Hangman"""
         if User.query(User.user_name == request.user_name).get():
-            raise endpoints.ConflictException("Try again with a new handle, that one is taken.")
-        user = User(user_name = request.user_name, email_address = request.email_address)
+            raise endpoints.ConflictException(
+            "Try again with a new handle, that one is taken.")
+        user = User(user_name = request.user_name,
+            email_address = request.email_address)
         user.put()
-        return StringMessage(message="Welcome to Hangman, {}".format(request.user_name))
+        return StringMessage(message="Welcome to Hangman, {}".\
+            format(request.user_name))
 
 
     @endpoints.method(
@@ -35,6 +37,7 @@ class HangmanAPI(remote.Service):
         name='create_game'
     )
     def create_game(self, request):
+        """Creates a new game for Hangman users"""
         user = User.query(User.user_name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException('User does not exist')

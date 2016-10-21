@@ -16,14 +16,18 @@ def file_len(fname):
             pass
     return i + 1
 
-def printGuesses(game_key):
-    # Get the guessed letters
-    pass
+def printGuesses(game):
+    pass # should return comma separated chars that have been guessed
 
-def printTargetSpaces(game_key):
-    pass
-    # Get the target word, loop through it, printing an underscore at each
-    # letter
+def printSpaces(game):
+    target = game.secret
+    returnStr = ""
+    for c in target:
+        if c == " ":
+            returnStr += "  "
+        else:
+            returnStr += "_ "
+    return returnStr
 
 def printTop():
     return("    ============        ")
