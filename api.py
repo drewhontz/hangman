@@ -1,11 +1,12 @@
 """ Creation of the Hangman API. """
 import endpoints
 from protorpc import remote, messages
-from model import User, Game, StringMessage, GameMessage
+from model import *
 
 USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
                                            email_address=messages.StringField(2))
 NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1))
+MOVE_REQUEST = endpoints.ResourceContainer(guess=messages.StringField(1))
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
@@ -40,9 +41,19 @@ class HangmanAPI(remote.Service):
         http_method='POST', name="guess_a_letter")
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
+        pass
+        # TODO:
         # gets game, checks if it is over, adds to the guess array or to the
         # match string if the guess has a match, decrements score accordingly
         # returns game status
+
+
+    @endpoints.method(ScoreTable, path="scores",
+        http_method="GET", name="get_high_scores")
+    def get_scores(self, request):
+        """Returns a list of the top 5 high scores"""
+        pass
+        # TODO:
 
 
 api = endpoints.api_server([HangmanAPI])

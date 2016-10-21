@@ -7,6 +7,10 @@ class User(ndb.Model):
     user_name = ndb.StringProperty(required=True)
     email_address = ndb.StringProperty()
 
+class Score(ndb.Model):
+    user_name = ndb.KeyProperty(required=True, kind="User")
+    score = ndb.IntegerProperty(required=True)
+
 class Game(ndb.Model):
     """Game object"""
     secret = randomWord()
@@ -58,3 +62,7 @@ class GameMessage(messages.Message):
     grass___ = messages.StringField(10, required=True)
     guesses = messages.StringField(11, required=True)
     zspaces = messages.StringField(12, required=True)
+
+class ScoreTable(messages.Message):
+    """Table for the topscores"""
+    pass
