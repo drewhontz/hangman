@@ -1,5 +1,5 @@
-from random import randint
 import linecache
+from random import randint
 
 def randomWord():
     """Opens the wordbank and returns the word from a random line"""
@@ -17,9 +17,14 @@ def file_len(fname):
     return i + 1
 
 def printGuesses(game):
-    pass # should return comma separated chars that have been guessed
+    """Returns the guesses up to this point"""
+    returnStr = "Guessed: ")
+    # guesses
+    # for c in guesses returnStr += c
+    return(returnStr)
 
 def printSpaces(game):
+    """Prints the blank spaces left during your game"""
     target = game.secret
     returnStr = ""
     for c in target:
@@ -35,10 +40,6 @@ def printTop():
 
 def printRope():
     return("    ||                      |        ")
-
-
-def printGrass():
-    return(",,,,||,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
 
 
 def printHead():
@@ -67,3 +68,7 @@ def printRightLeg():
 
 def printFill():
     return("    ||                               ")
+
+
+def printGrass():
+    return(",,,,||,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
