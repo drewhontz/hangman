@@ -2,11 +2,13 @@
 import endpoints
 from protorpc import remote, messages
 from model import *
+from utils import *
 
 USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
                                            email_address=messages.StringField(2))
 NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1))
-MOVE_REQUEST = endpoints.ResourceContainer(guess=messages.StringField(1))
+MOVE_REQUEST = endpoints.ResourceContainer(urlsafe_game_key=messages.StringField(1),
+    guess=messages.StringField(2))
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
@@ -33,16 +35,21 @@ class HangmanAPI(remote.Service):
         if not user:
             raise endpoints.NotFoundException('User does not exist')
         game = Game.new_game(user.key)
-        game.put()
         return game.to_form()
 
 
-    @endpoints.method(MOVE_REQUEST, GameMessage, path="game",
+    @endpoints.method(MOVE_REQUEST, GameMessage, path="game/{urlsafe_game_key}",
         http_method='POST', name="guess_a_letter")
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
-        pass
-        # TODO:
+        game = get_by_urlsafe(request.urlsafe_game_key, Game)
+        if request.guess in game.secret:
+            game.matched_letters += request.guess
+        else:
+            game.guessed_letters += request.guess
+            game.remaining_attempts -= 1
+        game.put()
+        return game.to_form()
         # gets game, checks if it is over, adds to the guess array or to the
         # match string if the guess has a match, decrements score accordingly
         # returns game status
