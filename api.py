@@ -43,7 +43,7 @@ class HangmanAPI(remote.Service):
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
-        if request.guess in game.secret:
+        if request.guess in game.target:
             game.matched_letters += request.guess
         else:
             game.guessed_letters += request.guess

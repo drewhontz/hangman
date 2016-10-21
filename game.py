@@ -34,7 +34,7 @@ def printGuesses(game):
 def printSpaces(game):
     """Prints the blank spaces left during your game"""
     matched_letters = game.matched_letters
-    target = game.secret  # we can hit parts of the model now so this is gone
+    target = game.target  # we can hit parts of the model now so this is gone
     returnStr = ""
     for c in target:
         if c == " ":

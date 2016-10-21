@@ -13,10 +13,9 @@ class Score(ndb.Model):
 
 class Game(ndb.Model):
     """Game object"""
-    secret = randomWord()
     user_name = ndb.KeyProperty(required=True, kind="User")
     remaining_attempts =  ndb.IntegerProperty(default=6)
-    target = ndb.StringProperty(default=secret)
+    target = ndb.StringProperty(default=randomWord())
     guessed_letters = ndb.StringProperty(default="")
     matched_letters = ndb.StringProperty(default="")
 
