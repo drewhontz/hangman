@@ -27,8 +27,8 @@ def printGuesses(game):
     returnStr = "Guessed: "
     guesses = game.guessed_letters
     for c in guesses:
-        returnStr += c + ", "
-    return(returnStr)
+        returnStr += c + " "
+    return returnStr + " Remaining guesses: " + str(game.remaining_attempts)
 
 
 def printSpaces(game):
@@ -41,11 +41,11 @@ def printSpaces(game):
             returnStr += "  "
         else:
             if c in matched_letters:
-                returnStr += c + " "
+                returnStr += c
             else:
                 returnStr += "_ "
     if returnStr == target:
-        game.over = true
+        game.over = True
         game.put()
     return returnStr
 
@@ -58,27 +58,27 @@ def printRope():
 
 
 def printHead():
-    return("    ||         ( )                   ")
+    return("    ||                     ( )       ")
 
 
 def printBody():
-    return("    ||          |                    ")
+    return("    ||                      |        ")
 
 
 def printLeftArm():
-    return("    ||        \ |                    ")
+    return("    ||                   - |        ")
 
 
 def printRightArm():
-    return("    ||        \ | /                  ")
+    return("    ||                   -- | --      ")
 
 
 def printLeftLeg():
-    return("    ||         /                     ")
+    return("    ||                    l          ")
 
 
 def printRightLeg():
-    return ("    ||         / \                  ")
+    return ("    ||                   l  l       ")
 
 
 def printFill():
