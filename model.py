@@ -31,16 +31,19 @@ class Game(ndb.Model):
         """Returns GameMessage for Hangman game"""
         form = GameMessage()
         if self.over:
-            form.a0 = " G A M E O V E R        "
-            form.a1 = "   G A M E O V E R      "
-            form.a2 = "     G A M E O V E R    "
-            form.a3 = "       G A M E O V E R  "
-            form.a4 = "         G A M E O V E R"
-            form.a5 = "       G A M E O V E R  "
-            form.a6 = "     G A M E O V E R    "
-            form.a7 = "   G A M E O V E R      "
-            form.a8 = " G A M E O V E R        "
-            form.a9 = "                        "
+            form.a0 = " G A M E O V E R "
+            form.a1 = " A M E O V E R G "
+            form.a2 = " M E O V E R G A "
+            form.a3 = " E O V E R G A M "
+            form.a4 = " O V E R G A M E "
+            form.a5 = " V E R G A M E O "
+            form.a6 = " E R G A M E O V "
+            form.a7 = " R G A M E O V E "
+            form.a8 = " - - - - - - - - - - - - - -"
+            if "_" in printSpaces(self):
+                form.a9 = " YOU ARE DEFEAT "
+            else:
+                form.a9 = " YOU ARE GOODTIME WINNER "
             form.k_guesses=printSpaces(self)
             form.k_spaces=printGuesses(self)
             form.l_key=self.key.urlsafe()

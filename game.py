@@ -46,6 +46,8 @@ def printSpaces(game):
                 returnStr += "_ "
     if returnStr == target:
         game.over = True
+        score = Score(game.user_name, game.remaining_attempts)
+        score.put()
         game.put()
     return returnStr
 
@@ -66,7 +68,7 @@ def printBody():
 
 
 def printLeftArm():
-    return("    ||                   - |        ")
+    return("    ||                    - |        ")
 
 
 def printRightArm():
@@ -74,7 +76,7 @@ def printRightArm():
 
 
 def printLeftLeg():
-    return("    ||                    l          ")
+    return("    ||                     l         ")
 
 
 def printRightLeg():

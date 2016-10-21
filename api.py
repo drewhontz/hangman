@@ -63,8 +63,8 @@ class HangmanAPI(remote.Service):
         http_method="GET", name="get_high_scores")
     def get_scores(self, request):
         """Returns a list of the top 5 high scores"""
-        pass
-        # TODO:
+        # pass
+        return ScoreTable
 
 
 api = endpoints.api_server([HangmanAPI])
