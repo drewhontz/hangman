@@ -11,6 +11,11 @@ class Score(ndb.Model):
     user_name = ndb.KeyProperty(required=True, kind="User")
     score = ndb.IntegerProperty(required=True)
 
+
+    def to_form(self):
+        return ScoreForm(user_name=self.user_name.get().name, score=self.score)
+
+
 class Game(ndb.Model):
     """Game object"""
     user_name = ndb.KeyProperty(required=True, kind="User")
@@ -153,6 +158,11 @@ class GameMessage(messages.Message):
     k_spaces = messages.StringField(12, required=True)
     l_key = messages.StringField(13, required=True)
 
+class ScoreForm(messages.Message):
+    user_name = messages.StringField(1, required=True)
+    score = messages.IntegerField(2, required=True)
+
+
 class ScoreTable(messages.Message):
     """Table for the topscores"""
-    pass
+    items = messages.MessageField(ScoreForm, 1, required=True)

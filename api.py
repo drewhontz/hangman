@@ -59,12 +59,22 @@ class HangmanAPI(remote.Service):
         return game.to_form()
 
 
-    @endpoints.method(ScoreTable, path="scores",
+    @endpoints.method(response_message=ScoreTable, path="scores",
         http_method="GET", name="get_high_scores")
     def get_scores(self, request):
         """Returns a list of the top 5 high scores"""
-        # pass
-        return ScoreTable
+        number_of_scores = 5
+        scores = Score.query().order(-Score.score).fetch(number_of_scores)
+        # TODO: Scores are not put in the table yet, and there is no way to deal
+        # with situations where there are less than 5 scores
+        return ScoreTable(items=[score.to_form() for score in scores])
 
+
+    @endpoints.method(USER_REQUEST, ScoreTable,
+        path="scores/{user_name}", http_method="POST",
+        name="get_user_scores")
+    def get_user_scores(self, request):
+        """Returns the users top 5 scores"""
+        return ScoreTable
 
 api = endpoints.api_server([HangmanAPI])
