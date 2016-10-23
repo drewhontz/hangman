@@ -1,3 +1,4 @@
+import endpoints
 from protorpc import messages
 from game import *
 from google.appengine.ext import ndb
@@ -13,7 +14,7 @@ class Score(ndb.Model):
 
 
     def to_form(self):
-        return ScoreForm(user_name=self.user_name.get().name, score=self.score)
+        return ScoreForm(user_name=self.user_name.get().user_name, score=self.score)
 
 
 class Game(ndb.Model):
@@ -31,6 +32,7 @@ class Game(ndb.Model):
         game = Game(user_name=user)
         game.put()
         return game
+
 
     def to_form(self):
         """Returns GameMessage for Hangman game"""
@@ -138,6 +140,16 @@ class Game(ndb.Model):
         return form
 
 
+    def game_end(self, won):
+        """Ends the game when a player wins or loses"""
+        self.over = True
+        self.put()
+        if won:
+            score = Score(user_name=self.user_name,
+                score=self.remaining_attempts)
+            score.put()
+
+
 class StringMessage(messages.Message):
     """Convenience class for single line responses"""
     message = messages.StringField(1, required=True)
@@ -165,4 +177,4 @@ class ScoreForm(messages.Message):
 
 class ScoreTable(messages.Message):
     """Table for the topscores"""
-    items = messages.MessageField(ScoreForm, 1, required=True)
+    items = messages.MessageField(ScoreForm, 1, repeated=True)

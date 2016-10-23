@@ -1,14 +1,29 @@
 import linecache
+import endpoints
 from random import randint
 
 
-def guessLetter():
-    pass
+def guess(game, letter):
+    if letter in game.guessed_letters or letter in game.matched_letters:
+        raise endpoints.BadRequestException("You already guessed that")
+    else:
+        if letter in game.target:
+            game.matched_letters += letter
+            unique_match = "".join(set(game.matched_letters))
+            unique_target = "".join(set(game.target))
+            if len(unique_match) == len(unique_target):
+                game.game_end(True)
+        else:
+            game.guessed_letters+= letter
+            game.remaining_attempts -= 1
+            if game.remaining_attempts == 0:
+                game.game_end(False)
+        game.put()
 
 def randomWord():
     """Opens the wordbank and returns the word from a random line"""
     file_name = "wordbank.txt"
-    number_of_lines = file_len(file_name)
+    number_of_lines = file_len(file_name) - 1
     target_line = randint(0, number_of_lines)
     target_word = linecache.getline(file_name, target_line)
     return target_word.replace("\n","")
@@ -44,11 +59,6 @@ def printSpaces(game):
                 returnStr += c
             else:
                 returnStr += "_ "
-    if returnStr == target:
-        game.over = True
-        score = Score(game.user_name, game.remaining_attempts)
-        score.put()
-        game.put()
     return returnStr
 
 def printTop():
@@ -80,7 +90,7 @@ def printLeftLeg():
 
 
 def printRightLeg():
-    return ("    ||                   l  l       ")
+    return ("    ||                    l   l     ")
 
 
 def printFill():
