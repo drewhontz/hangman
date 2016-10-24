@@ -98,10 +98,12 @@ class HangmanAPI(remote.Service):
         return StringMessage(message="Game deleted!")
 
 
+    @endpoints.method(response_message=StandingsTable, path="rankings",
+        http_method="GET", name="get_standings")
     def get_user_rankings(self, request):
-        """Returns an ordered list of users with best win-loss ratio"""
-        # TODO:
-        pass
+        """Returns an ordered list of users with best win-loss differential"""
+        games = Game.query().group_by((Game.user_name,))
+        return StandingsTable(items=[game.to_score() for game in games])
 
 
     def get_game_history(self, request):

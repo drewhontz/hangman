@@ -3,10 +3,12 @@ from protorpc import messages
 from game import *
 from google.appengine.ext import ndb
 
+
 class User(ndb.Model):
     """User object"""
     user_name = ndb.StringProperty(required=True)
     email_address = ndb.StringProperty()
+
 
 class Score(ndb.Model):
     """Model for score object"""
@@ -28,6 +30,7 @@ class Game(ndb.Model):
     matched_letters = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
     won = ndb.BooleanProperty(default=False)
+
 
     @classmethod
     def new_game(self, user):
@@ -58,9 +61,24 @@ class Game(ndb.Model):
             score.put()
 
 
+    def to_score(self):
+        """Returns score string for a game"""
+        form = StandingsForm()
+        user = self.user_name.get().user_name
+
+        wins = Score.query(Score.user_name == self.user_name).count()
+        losses = Game.query().filter(Game.won == False and Game.remaining_attempts == 0).count()
+        diff = wins - losses
+
+        form.user_name = user
+        form.score = str(diff)
+        return form
+
+
 class StringMessage(messages.Message):
     """Convenience class for single line responses"""
     message = messages.StringField(1, required=True)
+
 
 class GameMessage(messages.Message):
     """Visual representation of a game"""
@@ -73,7 +91,7 @@ class GameMessage(messages.Message):
 class GameList(messages.Message):
     """List of user's active games"""
     games = messages.MessageField(GameMessage, 1, repeated=True)
-    
+
 
 class ScoreForm(messages.Message):
     """Form for returning a score, nested in ScoreTable"""
@@ -81,6 +99,17 @@ class ScoreForm(messages.Message):
     score = messages.IntegerField(2, required=True)
 
 
+class StandingsForm(messages.Message):
+    """Form for returning a score, nested in ScoreTable"""
+    user_name = messages.StringField(1, required=True)
+    score = messages.StringField(2, required=True)
+
+
 class ScoreTable(messages.Message):
     """Table for the topscores"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
+
+
+class StandingsTable(messages.Message):
+    """Table for the topscores"""
+    items = messages.MessageField(StandingsForm, 1, repeated=True)
