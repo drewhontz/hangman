@@ -2,6 +2,7 @@ import linecache
 import endpoints
 from random import randint
 
+
 def str_match(history, target):
     """Compares 2 strings and returns if the unordered contents of the first can
     be assembled to form the target. Ex. str_match("abc", "cab") == True"""
@@ -35,7 +36,7 @@ def random_word():
     number_of_lines = file_len(file_name) - 1
     target_line = randint(0, number_of_lines)
     target_word = linecache.getline(file_name, target_line)
-    return target_word.replace("\n","")
+    return target_word.replace("\n", "")
 
 
 def file_len(fname):

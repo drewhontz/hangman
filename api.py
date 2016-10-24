@@ -13,7 +13,8 @@ MOVE_REQUEST = endpoints.ResourceContainer(
     urlsafe_game_key=messages.StringField(1),
     guess=messages.StringField(2)
 )
-NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1))
+NEW_GAME_REQUEST = endpoints.ResourceContainer(
+    user_name=messages.StringField(1))
 GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
 
 
@@ -21,21 +22,20 @@ GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
 class HangmanAPI(remote.Service):
     """Hangman API"""
     @endpoints.method(USER_REQUEST, StringMessage, path='user',
-        http_method='POST', name='create_new_user')
+                      http_method='POST', name='create_new_user')
     def create_user(self, request):
         """Create a new user for Hangman"""
         if User.query(User.user_name == request.user_name).get():
             raise endpoints.ConflictException(
-            "Try again with a new handle, that one is taken.")
-        user = User(user_name = request.user_name,
-            email_address = request.email_address)
+                "Try again with a new handle, that one is taken.")
+        user = User(user_name=request.user_name,
+                    email_address=request.email_address)
         user.put()
-        return StringMessage(message="Welcome to Hangman, {}".\
-            format(request.user_name))
-
+        return StringMessage(message="Welcome to Hangman, {}".
+                             format(request.user_name))
 
     @endpoints.method(NEW_GAME_REQUEST, GameMessage, path='game',
-        http_method='POST', name='create_game')
+                      http_method='POST', name='create_game')
     def create_game(self, request):
         """Creates a new game for Hangman users"""
         user = User.query(User.user_name == request.user_name).get()
@@ -45,10 +45,9 @@ class HangmanAPI(remote.Service):
         game.put()
         return game.to_form()
 
-
     @endpoints.method(MOVE_REQUEST, GameMessage,
-        path="game/{urlsafe_game_key}", http_method='POST',
-        name="guess_a_letter")
+                      path="game/{urlsafe_game_key}", http_method='POST',
+                      name="guess_a_letter")
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
         # TODO what if this fails?
@@ -58,19 +57,17 @@ class HangmanAPI(remote.Service):
         guess(game, request.guess)
         return game.to_form()
 
-
     @endpoints.method(response_message=ScoreTable, path="scores",
-        http_method="GET", name="get_high_scores")
+                      http_method="GET", name="get_high_scores")
     def get_scores(self, request):
         """Returns a list of the high scores"""
         scores = Score.query().order(-Score.score)
         # TODO: Better handling method for when there are no scores
         return ScoreTable(items=[score.to_form() for score in scores])
 
-
     @endpoints.method(USER_REQUEST, ScoreTable,
-        path="scores/{user_name}", http_method="POST",
-        name="get_user_scores")
+                      path="scores/{user_name}", http_method="POST",
+                      name="get_user_scores")
     def get_user_scores(self, request):
         """Returns the users top 5 scores"""
         user = User.query(User.user_name == request.user_name).get()
@@ -79,21 +76,20 @@ class HangmanAPI(remote.Service):
         scores = Score.query(user.key == Score.user_name).order(-Score.score)
         return ScoreTable(items=[score.to_form() for score in scores])
 
-
     @endpoints.method(USER_REQUEST, GameList, path="games/{user_name}",
-        http_method="GET", name="get_user_games")
+                      http_method="GET", name="get_user_games")
     def get_user_games(self, request):
         """Retrieves all active games for a given user"""
         user = User.query(User.user_name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException("That user does not exist")
-        games = Game.query(user.key == Game.user_name).filter(Game.over == False)
+        games = Game.query(user.key == Game.user_name).filter(
+            Game.over == False)
         return GameList(games=[game.to_form() for game in games])
 
-
     @endpoints.method(GAME_REQUEST, StringMessage,
-        path="games/delete/{key}", http_method="POST",
-        name="cancel_game")
+                      path="games/delete/{key}", http_method="POST",
+                      name="cancel_game")
     def cancel_game(self, request):
         """Cancels a given open game"""
         game = get_by_urlsafe(request.key, Game)
@@ -102,19 +98,17 @@ class HangmanAPI(remote.Service):
         game.key.delete()
         return StringMessage(message="Game deleted!")
 
-
     @endpoints.method(response_message=ScoreTable, path="rankings",
-        http_method="GET", name="get_user_rankings")
+                      http_method="GET", name="get_user_rankings")
     def get_user_rankings(self, request):
         """Returns an ordered list of users with best win-loss differential"""
         games = Game.query(projection=[Game.user_name], distinct=True)
-        items=[game.to_score() for game in games]
-        items.sort(key=lambda x:x.score, reverse=True)
+        items = [game.to_score() for game in games]
+        items.sort(key=lambda x: x.score, reverse=True)
         return ScoreTable(items=items)
 
-
     @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
-        http_method="POST", name="get_game_history")
+                      http_method="POST", name="get_game_history")
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
         game = get_by_urlsafe(request.key, Game)

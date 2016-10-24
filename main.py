@@ -21,11 +21,13 @@ from google.appengine.api import mail, app_identity
 
 
 class MainHandler(webapp2.RequestHandler):
+
     def get(self):
         self.response.write('Hello world!')
 
 
 class Reminder(webapp2.RequestHandler):
+
     def get(self):
         """Runs everyday, queries db for open games last modified more than 72
         hours ago and sends the game owner a reminder email"""
@@ -42,7 +44,7 @@ class Reminder(webapp2.RequestHandler):
                 body = "Hello {}, you have an open game! Please come back and play!".\
                     format(user.user_name)
                 mail.send_mail('noreply@{}.appspotmail.com'.format(app_name),
-                    user.email_address, subject, body)
+                               user.email_address, subject, body)
 
 
 app = webapp2.WSGIApplication([

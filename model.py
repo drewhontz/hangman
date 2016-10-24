@@ -15,7 +15,6 @@ class Score(ndb.Model):
     user_name = ndb.KeyProperty(required=True, kind="User")
     score = ndb.IntegerProperty(required=True)
 
-
     def to_form(self):
         """Returns a single score"""
         return ScoreForm(user_name=self.user_name.get().user_name, score=self.score)
@@ -24,13 +23,12 @@ class Score(ndb.Model):
 class Game(ndb.Model):
     """Game object"""
     user_name = ndb.KeyProperty(required=True, kind="User")
-    remaining_attempts =  ndb.IntegerProperty(default=6)
+    remaining_attempts = ndb.IntegerProperty(default=6)
     target = ndb.StringProperty(default=random_word())
     history = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
-    won = ndb.BooleanProperty(default=False) # I guess this could be computed
+    won = ndb.BooleanProperty(default=False)  # I guess this could be computed
     modified = ndb.DateProperty(auto_now=True)
-
 
     @classmethod
     def new_game(self, user):
@@ -38,7 +36,6 @@ class Game(ndb.Model):
         game = Game(user_name=user)
         game.put()
         return game
-
 
     def to_form(self):
         """Returns GameMessage for Hangman game"""
@@ -49,7 +46,6 @@ class Game(ndb.Model):
         form.d_guesses = print_guesses(self)
         return form
 
-
     def game_end(self, won):
         """Ends the game when a player wins or loses"""
         self.over = True
@@ -57,9 +53,8 @@ class Game(ndb.Model):
         self.put()
         if won:
             score = Score(user_name=self.user_name,
-                score=self.remaining_attempts)
+                          score=self.remaining_attempts)
             score.put()
-
 
     def to_score(self):
         """Returns score string for a game"""
@@ -67,7 +62,8 @@ class Game(ndb.Model):
         user = self.user_name.get().user_name
 
         wins = Score.query(Score.user_name == self.user_name).count()
-        losses = Game.query().filter(Game.won == False and Game.remaining_attempts == 0).count()
+        losses = Game.query().filter(
+            Game.won == False and Game.remaining_attempts == 0).count()
         diff = wins - losses
 
         form.user_name = user
