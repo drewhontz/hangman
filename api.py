@@ -81,7 +81,7 @@ class HangmanAPI(remote.Service):
 
 
     @endpoints.method(USER_REQUEST, GameList, path="games/{user_name}",
-        http_method="GET", name="get_games_by_user")
+        http_method="GET", name="get_user_games")
     def get_user_games(self, request):
         """Retrieves all active games for a given user"""
         user = User.query(User.user_name == request.user_name).get()
@@ -104,7 +104,7 @@ class HangmanAPI(remote.Service):
 
 
     @endpoints.method(response_message=ScoreTable, path="rankings",
-        http_method="GET", name="get_standings")
+        http_method="GET", name="get_user_rankings")
     def get_user_rankings(self, request):
         """Returns an ordered list of users with best win-loss differential"""
         games = Game.query(projection=[Game.user_name], distinct=True)
@@ -114,7 +114,7 @@ class HangmanAPI(remote.Service):
 
 
     @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
-        http_method="POST", name="get_history")
+        http_method="POST", name="get_game_history")
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
         game = get_by_urlsafe(request.key, Game)

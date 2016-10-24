@@ -15,11 +15,37 @@
 # limitations under the License.
 #
 import webapp2
+from datetime import datetime, timedelta
+from model import Game, User
+from google.appengine.api import mail, app_identity
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Hello world!')
 
+
+class Reminder(webapp2.RequestHandler):
+    def get(self):
+        """Runs everyday, queries db for open games last modified more than 72
+        hours ago and sends the game owner a reminder email"""
+        three_days_ago = datetime.now() - timedelta(days=3)
+        app_name = app_identity.get_application_id()
+
+        subject = "You have had an open game for 3 days now!"
+        open_games = Game.query(Game.over == False).\
+            filter(Game.modified < three_days_ago)
+
+        for game in open_games:
+            user = game.user_name.get()
+            if user.email_address:
+                body = "Hello {}, you have an open game! Please come back and play!".\
+                    format(user.user_name)
+                mail.send_mail('noreply@{}.appspotmail.com'.format(app_name),
+                    user.email_address, subject, body)
+
+
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/cron/reminder', Reminder)
 ], debug=True)

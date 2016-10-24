@@ -1,0 +1,4 @@
+cron:
+- description: Game reminder job
+  url: /cron/reminder
+  schedule: every 24 hours

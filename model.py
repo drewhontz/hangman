@@ -28,7 +28,8 @@ class Game(ndb.Model):
     target = ndb.StringProperty(default=random_word())
     history = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
-    won = ndb.BooleanProperty(default=False)
+    won = ndb.BooleanProperty(default=False) # I guess this could be computed
+    modified = ndb.DateProperty(auto_now=True)
 
 
     @classmethod
