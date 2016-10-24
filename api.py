@@ -74,22 +74,27 @@ class HangmanAPI(remote.Service):
 
     def get_user_games(self, request):
         """Retrieves all active games for a given user"""
+        # TODO:
         pass
 
 
     def cancel_game(self, request):
         """Cancels a given open game"""
+        # TODO:
         pass
 
 
     def get_user_rankings(self, request):
         """Returns an ordered list of users with best win-loss ratio"""
+        # TODO:
         pass
 
 
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
+        # TODO:
         pass
 
+    # TODO: ADD cron job; make sure it is in the yaml as well
 
 api = endpoints.api_server([HangmanAPI])
