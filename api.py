@@ -2,6 +2,7 @@
 import endpoints
 from protorpc import remote, messages
 from model import *
+from game import *
 from utils import *
 
 USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
@@ -9,6 +10,7 @@ USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
 NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1))
 MOVE_REQUEST = endpoints.ResourceContainer(urlsafe_game_key=messages.StringField(1),
     guess=messages.StringField(2))
+GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
@@ -34,7 +36,8 @@ class HangmanAPI(remote.Service):
         user = User.query(User.user_name == request.user_name).get()
         if not user:
             raise endpoints.NotFoundException('User does not exist')
-        game = Game.new_game(user.key)
+        game = Game(user_name=user.key, target=random_word())
+        game.put()
         return game.to_form()
 
 
@@ -72,16 +75,27 @@ class HangmanAPI(remote.Service):
         return ScoreTable(items=[score.to_form() for score in scores])
 
 
+    @endpoints.method(USER_REQUEST, GameList, path="games/{user_name}",
+        http_method="GET", name="get_games_by_user")
     def get_user_games(self, request):
         """Retrieves all active games for a given user"""
-        # TODO:
-        pass
+        user = User.query(User.user_name == request.user_name).get()
+        if not user:
+            raise endpoints.NotFoundException("That user does not exist")
+        games = Game.query(user.key == Game.user_name).filter(Game.over == False)
+        return GameList(games=[game.to_form() for game in games])
 
 
+    @endpoints.method(GAME_REQUEST, StringMessage,
+        path="games/delete/{key}", http_method="POST",
+        name="cancel_game")
     def cancel_game(self, request):
         """Cancels a given open game"""
-        # TODO:
-        pass
+        game = get_by_urlsafe(request.key, Game)
+        if not game:
+            raise endpoints.NotFoundException("Game does not exist")
+        game.key.delete()
+        return StringMessage(message="Game deleted!")
 
 
     def get_user_rankings(self, request):

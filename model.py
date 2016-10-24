@@ -70,6 +70,11 @@ class GameMessage(messages.Message):
     c_spaces = messages.StringField(4, required=True)
 
 
+class GameList(messages.Message):
+    """List of user's active games"""
+    games = messages.MessageField(GameMessage, 1, repeated=True)
+    
+
 class ScoreForm(messages.Message):
     """Form for returning a score, nested in ScoreTable"""
     user_name = messages.StringField(1, required=True)
