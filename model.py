@@ -9,11 +9,13 @@ class User(ndb.Model):
     email_address = ndb.StringProperty()
 
 class Score(ndb.Model):
+    """Model for score object"""
     user_name = ndb.KeyProperty(required=True, kind="User")
     score = ndb.IntegerProperty(required=True)
 
 
     def to_form(self):
+        """Returns a single score"""
         return ScoreForm(user_name=self.user_name.get().user_name, score=self.score)
 
 
@@ -21,10 +23,11 @@ class Game(ndb.Model):
     """Game object"""
     user_name = ndb.KeyProperty(required=True, kind="User")
     remaining_attempts =  ndb.IntegerProperty(default=6)
-    target = ndb.StringProperty(default=randomWord())
+    target = ndb.StringProperty(default=random_word())
     guessed_letters = ndb.StringProperty(default="")
     matched_letters = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
+    won = ndb.BooleanProperty(default=False)
 
     @classmethod
     def new_game(self, user):
@@ -37,112 +40,17 @@ class Game(ndb.Model):
     def to_form(self):
         """Returns GameMessage for Hangman game"""
         form = GameMessage()
-        if self.over:
-            form.a0 = " G A M E O V E R "
-            form.a1 = " A M E O V E R G "
-            form.a2 = " M E O V E R G A "
-            form.a3 = " E O V E R G A M "
-            form.a4 = " O V E R G A M E "
-            form.a5 = " V E R G A M E O "
-            form.a6 = " E R G A M E O V "
-            form.a7 = " R G A M E O V E "
-            form.a8 = " - - - - - - - - - - - - - -"
-            if "_" in printSpaces(self):
-                form.a9 = " YOU ARE DEFEAT "
-            else:
-                form.a9 = " YOU ARE GOODTIME WINNER "
-            form.k_guesses=printSpaces(self)
-            form.k_spaces=printGuesses(self)
-            form.l_key=self.key.urlsafe()
-            return form
-        else:
-            form.a0 = printTop()
-            form.a1 = printRope()
-            form.a2 = printRope()
-
-        if self.remaining_attempts == 6:
-            form.a3=printFill()
-            form.a4=printFill()
-            form.a5=printFill()
-            form.a6=printFill()
-            form.a7=printFill()
-            form.a8=printFill()
-            form.a9=printGrass()
-            form.k_guesses=printSpaces(self)
-            form.k_spaces=printGuesses(self)
-            form.l_key=self.key.urlsafe()
-        elif self.remaining_attempts == 5:
-            form.a3 = printHead()
-            form.a4 = printFill()
-            form.a5 = printFill()
-            form.a6 = printFill()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
-        elif self.remaining_attempts == 4:
-            form.a3 = printHead()
-            form.a4 = printBody()
-            form.a5 = printBody()
-            form.a6 = printFill()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
-        elif self.remaining_attempts == 3:
-            form.a3 = printHead()
-            form.a4 = printLeftArm()
-            form.a5 = printBody()
-            form.a6 = printFill()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
-        elif self.remaining_attempts == 2:
-            form.a3 = printHead()
-            form.a4 = printRightArm()
-            form.a5 = printBody()
-            form.a6 = printFill()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
-        elif self.remaining_attempts == 1:
-            form.a3 = printHead()
-            form.a4 = printRightArm()
-            form.a5 = printBody()
-            form.a6 = printLeftLeg()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
-        else:
-            form.a3 = printHead()
-            form.a4 = printRightArm()
-            form.a5 = printBody()
-            form.a6 = printRightLeg()
-            form.a7 = printFill()
-            form.a8 = printFill()
-            form.a9 = printGrass()
-            form.k_guesses = printSpaces(self)
-            form.k_spaces = printGuesses(self)
-            form.l_key = self.key.urlsafe()
+        form.a_key = self.key.urlsafe()
+        form.b_status = get_status(self)
+        form.c_spaces = print_spaces(self)
+        form.d_guesses = print_guesses(self)
         return form
 
 
     def game_end(self, won):
         """Ends the game when a player wins or loses"""
         self.over = True
+        self.won = won
         self.put()
         if won:
             score = Score(user_name=self.user_name,
@@ -156,21 +64,14 @@ class StringMessage(messages.Message):
 
 class GameMessage(messages.Message):
     """Visual representation of a game"""
-    a0 = messages.StringField(1, required=True)
-    a1 = messages.StringField(2, required=True)
-    a2 = messages.StringField(3, required=True)
-    a3 = messages.StringField(4, required=True)
-    a4 = messages.StringField(5, required=True)
-    a5 = messages.StringField(6, required=True)
-    a6 = messages.StringField(7, required=True)
-    a7 = messages.StringField(8, required=True)
-    a8 = messages.StringField(9, required=True)
-    a9 = messages.StringField(10, required=True)
-    k_guesses = messages.StringField(11, required=True)
-    k_spaces = messages.StringField(12, required=True)
-    l_key = messages.StringField(13, required=True)
+    a_key = messages.StringField(1, required=True)
+    b_status = messages.StringField(2, required=True)
+    d_guesses = messages.StringField(3, required=True)
+    c_spaces = messages.StringField(4, required=True)
+
 
 class ScoreForm(messages.Message):
+    """Form for returning a score, nested in ScoreTable"""
     user_name = messages.StringField(1, required=True)
     score = messages.IntegerField(2, required=True)
 

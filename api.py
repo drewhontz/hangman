@@ -55,17 +55,20 @@ class HangmanAPI(remote.Service):
         http_method="GET", name="get_high_scores")
     def get_scores(self, request):
         """Returns a list of the high scores"""
-        scores = Score.query().order(-Score.score).fetch()
-        # TODO: Scores are not put in the table yet, and there is no way to deal
-        # with situations where there are less than 5 scores
+        scores = Score.query().order(-Score.score)
+        # TODO: Better handling method for when there are no scores
         return ScoreTable(items=[score.to_form() for score in scores])
 
 
-    # @endpoints.method(USER_REQUEST, ScoreTable,
-    #     path="scores/{user_name}", http_method="POST",
-    #     name="get_user_scores")
-    # def get_user_scores(self, request):
-    #     """Returns the users top 5 scores"""
-    #     return ScoreTable
+    @endpoints.method(USER_REQUEST, ScoreTable,
+        path="scores/{user_name}", http_method="POST",
+        name="get_user_scores")
+    def get_user_scores(self, request):
+        """Returns the users top 5 scores"""
+        user = User.query(User.user_name == request.user_name).get()
+        if not user:
+            raise endpoints.NotFoundException("That user doesn't exist")
+        scores = Score.query(user.key == Score.user_name).order(-Score.score)
+        return ScoreTable(items=[score.to_form() for score in scores])
 
 api = endpoints.api_server([HangmanAPI])

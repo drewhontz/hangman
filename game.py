@@ -4,6 +4,7 @@ from random import randint
 
 
 def guess(game, letter):
+    """Game guessing logic"""
     if letter in game.guessed_letters or letter in game.matched_letters:
         raise endpoints.BadRequestException("You already guessed that")
     else:
@@ -20,7 +21,8 @@ def guess(game, letter):
                 game.game_end(False)
         game.put()
 
-def randomWord():
+
+def random_word():
     """Opens the wordbank and returns the word from a random line"""
     file_name = "wordbank.txt"
     number_of_lines = file_len(file_name) - 1
@@ -37,16 +39,27 @@ def file_len(fname):
     return i + 1
 
 
-def printGuesses(game):
+def get_status(game):
+    """Returns the status of the game, win-lose-or remaining_attempts"""
+    if game.over == True:
+        if game.won == True:
+            return "Game over, you win!"
+        else:
+            return "Game over, try again!"
+    else:
+        return "Keep guessing, you have " + str(game.remaining_attempts) + " guesses left."
+
+
+def print_guesses(game):
     """Returns the guesses up to this point"""
     returnStr = "Guessed: "
     guesses = game.guessed_letters
     for c in guesses:
         returnStr += c + " "
-    return returnStr + " Remaining guesses: " + str(game.remaining_attempts)
+    return returnStr
 
 
-def printSpaces(game):
+def print_spaces(game):
     """Prints the blank spaces left during your game"""
     matched_letters = game.matched_letters
     target = game.target  # we can hit parts of the model now so this is gone
@@ -60,42 +73,3 @@ def printSpaces(game):
             else:
                 returnStr += "_ "
     return returnStr
-
-def printTop():
-    return("    ============        ")
-
-
-def printRope():
-    return("    ||                      |        ")
-
-
-def printHead():
-    return("    ||                     ( )       ")
-
-
-def printBody():
-    return("    ||                      |        ")
-
-
-def printLeftArm():
-    return("    ||                    - |        ")
-
-
-def printRightArm():
-    return("    ||                   -- | --      ")
-
-
-def printLeftLeg():
-    return("    ||                     l         ")
-
-
-def printRightLeg():
-    return ("    ||                    l   l     ")
-
-
-def printFill():
-    return("    ||                               ")
-
-
-def printGrass():
-    return(",,,,||,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
