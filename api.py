@@ -5,12 +5,17 @@ from model import *
 from game import *
 from utils import *
 
-USER_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1),
-                                           email_address=messages.StringField(2))
+USER_REQUEST = endpoints.ResourceContainer(
+    user_name=messages.StringField(1),
+    email_address=messages.StringField(2)
+)
+MOVE_REQUEST = endpoints.ResourceContainer(
+    urlsafe_game_key=messages.StringField(1),
+    guess=messages.StringField(2)
+)
 NEW_GAME_REQUEST = endpoints.ResourceContainer(user_name=messages.StringField(1))
-MOVE_REQUEST = endpoints.ResourceContainer(urlsafe_game_key=messages.StringField(1),
-    guess=messages.StringField(2))
 GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
+
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
@@ -98,12 +103,15 @@ class HangmanAPI(remote.Service):
         return StringMessage(message="Game deleted!")
 
 
-    @endpoints.method(response_message=StandingsTable, path="rankings",
+    @endpoints.method(response_message=ScoreTable, path="rankings",
         http_method="GET", name="get_standings")
     def get_user_rankings(self, request):
         """Returns an ordered list of users with best win-loss differential"""
-        games = Game.query().group_by((Game.user_name,))
-        return StandingsTable(items=[game.to_score() for game in games])
+        games = Game.query(projection=[Game.user_name], distinct=True)
+        items=[game.to_score() for game in games]
+        items.sort(key=lambda x:x.score, reverse=True)
+        return ScoreTable(items=items)
+
 
     @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
         http_method="POST", name="get_history")

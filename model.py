@@ -62,7 +62,7 @@ class Game(ndb.Model):
 
     def to_score(self):
         """Returns score string for a game"""
-        form = StandingsForm()
+        form = ScoreForm()
         user = self.user_name.get().user_name
 
         wins = Score.query(Score.user_name == self.user_name).count()
@@ -70,7 +70,7 @@ class Game(ndb.Model):
         diff = wins - losses
 
         form.user_name = user
-        form.score = str(diff)
+        form.score = diff
         return form
 
 
@@ -98,17 +98,6 @@ class ScoreForm(messages.Message):
     score = messages.IntegerField(2, required=True)
 
 
-class StandingsForm(messages.Message):
-    """Form for returning a score, nested in ScoreTable"""
-    user_name = messages.StringField(1, required=True)
-    score = messages.StringField(2, required=True)
-
-
 class ScoreTable(messages.Message):
     """Table for the topscores"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
-
-
-class StandingsTable(messages.Message):
-    """Table for the topscores"""
-    items = messages.MessageField(StandingsForm, 1, repeated=True)
