@@ -71,4 +71,25 @@ class HangmanAPI(remote.Service):
         scores = Score.query(user.key == Score.user_name).order(-Score.score)
         return ScoreTable(items=[score.to_form() for score in scores])
 
+
+    def get_user_games(self, request):
+        """Retrieves all active games for a given user"""
+        pass
+
+
+    def cancel_game(self, request):
+        """Cancels a given open game"""
+        pass
+
+
+    def get_user_rankings(self, request):
+        """Returns an ordered list of users with best win-loss ratio"""
+        pass
+
+
+    def get_game_history(self, request):
+        """Returns a list of the users guesses"""
+        pass
+
+
 api = endpoints.api_server([HangmanAPI])
