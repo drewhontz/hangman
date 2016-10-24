@@ -105,11 +105,12 @@ class HangmanAPI(remote.Service):
         games = Game.query().group_by((Game.user_name,))
         return StandingsTable(items=[game.to_score() for game in games])
 
-
+    @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
+        http_method="POST", name="get_history")
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
-        # TODO:
-        pass
+        game = get_by_urlsafe(request.key, Game)
+        return StringMessage(message="history in order of guess: " + game.history)
 
     # TODO: ADD cron job; make sure it is in the yaml as well
 

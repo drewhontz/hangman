@@ -2,20 +2,27 @@ import linecache
 import endpoints
 from random import randint
 
+def str_match(history, target):
+    """Compares 2 strings and returns if the unordered contents of the first can
+    be assembled to form the target. Ex. str_match("abc", "cab") == True"""
+    for c in target:
+        if c not in history:
+            return False
+    return True
+
 
 def guess(game, letter):
     """Game guessing logic"""
-    if letter in game.guessed_letters or letter in game.matched_letters:
+    if len(letter) > 1:
+        raise endpoints.BadRequestException("Please only guess one character")
+    if letter in game.history:
         raise endpoints.BadRequestException("You already guessed that")
     else:
+        game.history += letter
         if letter in game.target:
-            game.matched_letters += letter
-            unique_match = "".join(set(game.matched_letters))
-            unique_target = "".join(set(game.target))
-            if len(unique_match) == len(unique_target):
+            if str_match(game.history, game.target):
                 game.game_end(True)
         else:
-            game.guessed_letters+= letter
             game.remaining_attempts -= 1
             if game.remaining_attempts == 0:
                 game.game_end(False)
@@ -53,22 +60,20 @@ def get_status(game):
 def print_guesses(game):
     """Returns the guesses up to this point"""
     returnStr = "Guessed: "
-    guesses = game.guessed_letters
-    for c in guesses:
-        returnStr += c + " "
+    for c in game.history:
+        if c not in game.target:
+            returnStr += c + " "
     return returnStr
 
 
 def print_spaces(game):
     """Prints the blank spaces left during your game"""
-    matched_letters = game.matched_letters
-    target = game.target  # we can hit parts of the model now so this is gone
     returnStr = ""
-    for c in target:
+    for c in game.target:
         if c == " ":
             returnStr += "  "
         else:
-            if c in matched_letters:
+            if c in game.target and c in game.history:
                 returnStr += c
             else:
                 returnStr += "_ "

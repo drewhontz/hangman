@@ -26,8 +26,7 @@ class Game(ndb.Model):
     user_name = ndb.KeyProperty(required=True, kind="User")
     remaining_attempts =  ndb.IntegerProperty(default=6)
     target = ndb.StringProperty(default=random_word())
-    guessed_letters = ndb.StringProperty(default="")
-    matched_letters = ndb.StringProperty(default="")
+    history = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
     won = ndb.BooleanProperty(default=False)
 
