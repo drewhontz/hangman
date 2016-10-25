@@ -34,7 +34,7 @@ class HangmanAPI(remote.Service):
         return StringMessage(message="Welcome to Hangman, {}".
                              format(request.user_name))
 
-    @endpoints.method(NEW_GAME_REQUEST, GameMessage, path='game',
+    @endpoints.method(NEW_GAME_REQUEST, GameForm, path='game',
                       http_method='POST', name='create_game')
     def create_game(self, request):
         """Creates a new game for Hangman users"""
@@ -45,7 +45,7 @@ class HangmanAPI(remote.Service):
         game.put()
         return game.to_form()
 
-    @endpoints.method(MOVE_REQUEST, GameMessage,
+    @endpoints.method(MOVE_REQUEST, GameForm,
                       path="game/{urlsafe_game_key}", http_method='POST',
                       name="guess_a_letter")
     def guess_a_letter(self, request):

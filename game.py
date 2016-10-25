@@ -6,6 +6,8 @@ from random import randint
 def str_match(history, target):
     """Compares 2 strings and returns if the unordered contents of the first can
     be assembled to form the target. Ex. str_match("abc", "cab") == True"""
+    if " " in target:
+        target = target.replace(" ", "")
     for c in target:
         if c not in history:
             return False

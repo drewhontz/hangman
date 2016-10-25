@@ -28,7 +28,7 @@ class Game(ndb.Model):
     history = ndb.StringProperty(default="")
     over = ndb.BooleanProperty(default=False)
     won = ndb.BooleanProperty(default=False)  # I guess this could be computed
-    modified = ndb.DateProperty(auto_now=True)
+    modified = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
     def new_game(self, user):
@@ -38,8 +38,8 @@ class Game(ndb.Model):
         return game
 
     def to_form(self):
-        """Returns GameMessage for Hangman game"""
-        form = GameMessage()
+        """Returns GameForm for Hangman game"""
+        form = GameForm()
         form.a_key = self.key.urlsafe()
         form.b_status = get_status(self)
         form.c_spaces = print_spaces(self)
@@ -86,7 +86,7 @@ class GameForm(messages.Message):
 
 class GameList(messages.Message):
     """List of user's active games"""
-    games = messages.MessageField(GameMessage, 1, repeated=True)
+    games = messages.MessageField(GameForm, 1, repeated=True)
 
 
 class ScoreForm(messages.Message):
