@@ -50,7 +50,6 @@ class HangmanAPI(remote.Service):
                       name="guess_a_letter")
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
-        # TODO what if this fails?
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.over == True:
             raise endpoints.BadRequestException("GAME HAS ENDED")
@@ -59,10 +58,9 @@ class HangmanAPI(remote.Service):
 
     @endpoints.method(response_message=ScoreTable, path="scores",
                       http_method="GET", name="get_high_scores")
-    def get_scores(self, request):
+    def get_high_scores(self, request):
         """Returns a list of the high scores"""
         scores = Score.query().order(-Score.score)
-        # TODO: Better handling method for when there are no scores
         return ScoreTable(items=[score.to_form() for score in scores])
 
     @endpoints.method(USER_REQUEST, ScoreTable,
@@ -114,6 +112,5 @@ class HangmanAPI(remote.Service):
         game = get_by_urlsafe(request.key, Game)
         return StringMessage(message="history in order of guess: " + game.history)
 
-    # TODO: ADD cron job; make sure it is in the yaml as well
 
 api = endpoints.api_server([HangmanAPI])

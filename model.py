@@ -76,7 +76,7 @@ class StringMessage(messages.Message):
     message = messages.StringField(1, required=True)
 
 
-class GameMessage(messages.Message):
+class GameForm(messages.Message):
     """Visual representation of a game"""
     a_key = messages.StringField(1, required=True)
     b_status = messages.StringField(2, required=True)
