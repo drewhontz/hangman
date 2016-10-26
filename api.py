@@ -1,8 +1,7 @@
-# TODO: Make sure users cannot cancel completed games
 # TODO: Score keeping to the documentation in README.md
 # TODO: Add instructions to play the game in README
 # TODO: Add more of a description to each endpoint
-# TODO: Make game.py changes
+# TODO: Make game.py validation changes
 # TODO: Add optional params to number_of_results to limit high scores
 # TODO: Fix up get get history so that it returns a game state with each guess
 
@@ -103,7 +102,11 @@ class HangmanAPI(remote.Service):
         game = get_by_urlsafe(request.key, Game)
         if not game:
             raise endpoints.NotFoundException("Game does not exist")
-        game.key.delete()
+        if game.over:
+            raise endpoints.ForbiddenException(
+                "You cannot cancel a completed game")
+        else:
+            game.key.delete()
         return StringMessage(message="Game deleted!")
 
     @endpoints.method(response_message=ScoreTable, path="rankings",
