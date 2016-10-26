@@ -14,6 +14,10 @@ Hangman is a simple letter guessing game. Each game begins with a random 'target
 
 - This project's architecture was provided by Udacity and has only been slightly modified to meet the logical concerns of the game Hangman. Many names, function patterns, and logic has been borrowed from this provided 'Skeleton'
 
+## Scoring
+
+Hangman has two forms of scoring, single game scores and user rankings. Your  single game score is the number of remaining guesses when a user wins a game; no score is recorded if the user fails to guess the target in fewer than 6 guesses. For user rankings, users are ranked by the difference between their number of wins and losses. EX: User "Drew" has 5 wins and 2 losses, his ranking score is 3. The higher the ranking (compared to other users) the higher a user will place on the scoreboard. 
+
 ## Files Included:
 
 - api.py: Contains endpoints and calls to the game playing logic.
