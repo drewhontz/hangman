@@ -16,7 +16,16 @@ Hangman is a simple letter guessing game. Each game begins with a random 'target
 
 ## Scoring
 
-Hangman has two forms of scoring, single game scores and user rankings. Your  single game score is the number of remaining guesses when a user wins a game; no score is recorded if the user fails to guess the target in fewer than 6 guesses. For user rankings, users are ranked by the difference between their number of wins and losses. EX: User "Drew" has 5 wins and 2 losses, his ranking score is 3. The higher the ranking (compared to other users) the higher a user will place on the scoreboard. 
+Hangman has two forms of scoring, single game scores and user rankings. Your  single game score is the number of remaining guesses when a user wins a game; no score is recorded if the user fails to guess the target in fewer than 6 guesses. For user rankings, users are ranked by the difference between their number of wins and losses. EX: User "Drew" has 5 wins and 2 losses, his ranking score is 3. The higher the ranking (compared to other users) the higher a user will place on the scoreboard.
+
+## How to Play
+- Create a user account with the create_user endpoint
+- Create a new game with the create_game endpoint
+- Copy the game key returned with the create_game request
+- Paste the game key in the key field in the "guess_a_letter" endpoint and pick a letter to guess
+- Repeat until the target is guessed or you exhaust your 6 attempts.
+- [OPTIONAL] Open games can be canceled with the cancel_game endpoint.
+- [OPTIONAL] User scores and leaderboards can be viewed with the user_score and get_high_scores endpoints respectively. 
 
 ## Files Included:
 

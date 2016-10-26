@@ -1,5 +1,3 @@
-# TODO: Score keeping to the documentation in README.md
-# TODO: Add instructions to play the game in README
 # TODO: Add more of a description to each endpoint
 # TODO: Make game.py validation changes
 # TODO: Fix up get get history so that it returns a game state with each guess
