@@ -1,9 +1,10 @@
 """ Creation of the Hangman API. """
 import endpoints
 from protorpc import remote, messages
-from model import *
-from game import *
-from utils import *
+from game import guess
+from utils import get_by_urlsafe
+from model import (User, Game, Score,
+                   StringMessage, GameForm, GameList, ScoreTable)
 
 USER_REQUEST = endpoints.ResourceContainer(
     user_name=messages.StringField(1),
