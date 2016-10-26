@@ -1,5 +1,3 @@
-# TODO: Add more of a description to each endpoint
-# TODO: Make game.py validation changes
 # TODO: Fix up get get history so that it returns a game state with each guess
 
 
@@ -118,12 +116,13 @@ class HangmanAPI(remote.Service):
         items.sort(key=lambda x: x.score, reverse=True)
         return ScoreTable(items=items)
 
-    @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
+    @endpoints.method(GAME_REQUEST, HistoryMessage, path="/games/history/{key}",
                       http_method="GET", name="get_game_history")
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
         game = get_by_urlsafe(request.key, Game)
-        return StringMessage(message="history in order of guess: " + game.history)
+        moves = game.history_to_form()
+        return HistoryMessage(history=[move for move in moves])
 
 
 api = endpoints.api_server([HangmanAPI])

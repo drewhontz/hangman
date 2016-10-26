@@ -25,7 +25,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
 - Paste the game key in the key field in the "guess_a_letter" endpoint and pick a letter to guess
 - Repeat until the target is guessed or you exhaust your 6 attempts.
 - [OPTIONAL] Open games can be canceled with the cancel_game endpoint.
-- [OPTIONAL] User scores and leaderboards can be viewed with the user_score and get_high_scores endpoints respectively. 
+- [OPTIONAL] User scores and leaderboards can be viewed with the user_score and get_high_scores endpoints respectively.
 
 ## Files Included:
 
@@ -41,39 +41,66 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
 ## Endpoints Included:
 
 - **create_user**
-
+  - Path: 'user'
+  - Method: POST
+  - Parameters: user_name, email (optional)
+  - Returns: StringMessage welcoming new user
   - Description: Creates a new User. user_name provided must be unique. Will raise a ConflictException if a User with that user_name already exists.
 
 - **create_game**
-
+  - Path: 'game'
+  - Method: POST
+  - Parameters: user_name
+  - Returns: A new game form
   - Description: Creates a new Game. user_name provided must correspond to an existing user - will raise a NotFoundException if not.
 
 - **guess_a_letter**
-
+  - Path: 'game/{urlsafe_game_key}'
+  - Method: PUT
+  - Parameters: urlsafe_game_key, guess
+  - Returns: GameForm with current game state.
   - Description: Accepts a 'guess' and returns the updated state of the game. If this results in winning a game, a corresponding Score entity will be created.
 
 - **get_high_scores**
-
+  - Path: 'scores'
+  - Method: GET
+  - Parameters: n/a
+  - Returns: GameForm with current game state.
   - Description: Returns all Scores in the database ordered from high to low.
 
 - **get_user_scores**
-
+  - Path: 'scores/{user_name}'
+  - Method: GET
+  - Parameters: user_name
+  - Returns: ScoreTable of user's scores
   - Description: Returns all Scores recorded by the provided player (unordered). Will raise a NotFoundException if the User does not exist.
 
 - **get_user_games**
-
+  - Path: 'game/{user_name}'
+  - Method: GET
+  - Parameters: user_name
+  - Returns: Returns GameList of user's active games.
   - Description: Retrieves all the active games for the provided user
 
 - **cancel_game**
-
+  - Path: 'game/delete/{key}'
+  - Method: DELETE
+  - Parameters: key
+  - Returns: StringMessage confirming game deletion.
   - Description: When given a urlsafe_game_key, this endpoint will delete the corresponding game
 
 - **get_user_rankings**
-
+  - Path: 'rankings'
+  - Method: GET
+  - Parameters: n/a
+  - Returns: ScoreTable with user rankings by win-loss differential.
   - Description: Returns an ordered list of users, ranked from highest win-loss differential to lowest.
 
 - **get_game_history**
-
+  - Path: 'game/history/{key}'
+  - Method: GET
+  - Parameters: key
+  - Returns: HistoryMessage with each guess and the corresponding game state
   - Description: Returns a string of characters that have been guessed during the course of a game
 
 ## Models Included:

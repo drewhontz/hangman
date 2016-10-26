@@ -16,10 +16,14 @@ def str_match(history, target):
 
 def guess(game, letter):
     """Game guessing logic"""
-    if len(letter) > 1:
-        raise endpoints.BadRequestException("Please only guess one character")
+    if len(letter) > 1 and letter != game.target:
+        raise endpoints.BadRequestException("Wrong answer. This guess does not count against you. Continue guessing!")
+    if letter == game.target:
+        game.game_end(True)
     if letter in game.history:
         raise endpoints.BadRequestException("You already guessed that")
+    if not letter.isAlpha():
+        raise endpoints.BadRequestException("You cannot guess special characters")
     else:
         game.history += letter
         if letter in game.target:

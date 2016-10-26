@@ -70,6 +70,16 @@ class Game(ndb.Model):
         form.score = diff
         return form
 
+    def history_to_form(self):
+        """Returns an array of move forms"""
+        history = ""
+        for guess in self.history:
+            form = MoveForm()
+            form.guess = guess
+            form.result = if guess in self.target
+            form.progress = # TODO finish this up
+        return history
+
 
 class StringMessage(messages.Message):
     """Convenience class for single line responses"""
@@ -98,3 +108,15 @@ class ScoreForm(messages.Message):
 class ScoreTable(messages.Message):
     """Table for the topscores"""
     items = messages.MessageField(ScoreForm, 1, repeated=True)
+
+
+class HistoryMessage(messages.Message):
+    """Message for holding move forms"""
+    history = messages.MessageField(MoveForm, 1, repeated=True)
+
+
+class MoveForm(messages.Message):
+    """Form representation of a move"""
+    guess = messages.StringField(1, required=True)
+    result = messages.BooleanField(2, required=True)
+    progress = messages.StringField(3, required=True)
