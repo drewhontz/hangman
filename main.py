@@ -20,12 +20,6 @@ from model import Game, User
 from google.appengine.api import mail, app_identity
 
 
-class MainHandler(webapp2.RequestHandler):
-
-    def get(self):
-        self.response.write('Hello world!')
-
-
 class Reminder(webapp2.RequestHandler):
 
     def get(self):
@@ -48,6 +42,5 @@ class Reminder(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler),
     ('/cron/reminder', Reminder)
 ], debug=True)
