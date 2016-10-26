@@ -1,6 +1,6 @@
 import endpoints
 from protorpc import messages
-from game import random_word
+from game import random_word, print_spaces, print_guesses, get_status
 from google.appengine.ext import ndb
 
 
