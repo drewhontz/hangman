@@ -69,7 +69,10 @@ class HangmanAPI(remote.Service):
                       http_method="GET", name="get_high_scores")
     def get_high_scores(self, request):
         """Returns a list of the high scores"""
-        scores = Score.query().order(-Score.score)
+        if request.number_of_results:
+            scores = Score.query(limit=number_of_results).order(-Score.score)
+        else:
+            scores = Score.query().order(-Score.score)
         return ScoreTable(items=[score.to_form() for score in scores])
 
     @endpoints.method(USER_REQUEST, ScoreTable,
