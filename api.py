@@ -2,7 +2,6 @@
 # TODO: Add instructions to play the game in README
 # TODO: Add more of a description to each endpoint
 # TODO: Make game.py validation changes
-# TODO: Add optional params to number_of_results to limit high scores
 # TODO: Fix up get get history so that it returns a game state with each guess
 
 
@@ -25,7 +24,7 @@ MOVE_REQUEST = endpoints.ResourceContainer(
 NEW_GAME_REQUEST = endpoints.ResourceContainer(
     user_name=messages.StringField(1))
 GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
-
+SCORE_REQUEST = endpoints.ResourceContainer(number_of_results=messages.IntegerField(1))
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
@@ -65,7 +64,7 @@ class HangmanAPI(remote.Service):
         guess(game, request.guess)
         return game.to_form()
 
-    @endpoints.method(response_message=ScoreTable, path="scores",
+    @endpoints.method(SCORE_REQUEST, ScoreTable, path="scores",
                       http_method="GET", name="get_high_scores")
     def get_high_scores(self, request):
         """Returns a list of the high scores"""
