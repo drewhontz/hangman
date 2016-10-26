@@ -47,7 +47,7 @@ class HangmanAPI(remote.Service):
         return game.to_form()
 
     @endpoints.method(MOVE_REQUEST, GameForm,
-                      path="game/{urlsafe_game_key}", http_method='POST',
+                      path="game/{urlsafe_game_key}", http_method='PUT',
                       name="guess_a_letter")
     def guess_a_letter(self, request):
         """Allows user to guess at the secret word"""
@@ -65,7 +65,7 @@ class HangmanAPI(remote.Service):
         return ScoreTable(items=[score.to_form() for score in scores])
 
     @endpoints.method(USER_REQUEST, ScoreTable,
-                      path="scores/{user_name}", http_method="POST",
+                      path="scores/{user_name}", http_method="GET",
                       name="get_user_scores")
     def get_user_scores(self, request):
         """Returns the users top 5 scores"""
@@ -87,7 +87,7 @@ class HangmanAPI(remote.Service):
         return GameList(games=[game.to_form() for game in games])
 
     @endpoints.method(GAME_REQUEST, StringMessage,
-                      path="games/delete/{key}", http_method="POST",
+                      path="games/delete/{key}", http_method="DELETE",
                       name="cancel_game")
     def cancel_game(self, request):
         """Cancels a given open game"""
@@ -107,7 +107,7 @@ class HangmanAPI(remote.Service):
         return ScoreTable(items=items)
 
     @endpoints.method(GAME_REQUEST, StringMessage, path="/games/history/{key}",
-                      http_method="POST", name="get_game_history")
+                      http_method="GET", name="get_game_history")
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
         game = get_by_urlsafe(request.key, Game)
