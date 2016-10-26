@@ -12,9 +12,6 @@ handlers:
 - url: /_ah/spi/.*
   script: api.api
 
-- url: .*
-  script: main.app
-
 - url: /cron/reminder
   script: main.app
 
