@@ -1,3 +1,12 @@
+# TODO: Make sure users cannot cancel completed games
+# TODO: Score keeping to the documentation in README.md
+# TODO: Add instructions to play the game in README
+# TODO: Add more of a description to each endpoint
+# TODO: Make game.py changes
+# TODO: Add optional params to number_of_results to limit high scores
+# TODO: Fix up get get history so that it returns a game state with each guess
+
+
 """ Creation of the Hangman API. """
 import endpoints
 from protorpc import remote, messages
