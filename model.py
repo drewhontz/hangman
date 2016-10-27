@@ -2,6 +2,7 @@ import endpoints
 from protorpc import messages
 from game import random_word, print_spaces, print_guesses, get_status
 from google.appengine.ext import ndb
+from utils import get_by_urlsafe
 
 
 class User(ndb.Model):
@@ -42,8 +43,8 @@ class Game(ndb.Model):
         form = GameForm()
         form.a_key = self.key.urlsafe()
         form.b_status = get_status(self)
-        form.c_spaces = print_spaces(self)
-        form.d_guesses = print_guesses(self)
+        form.c_spaces = print_spaces(self, self.history)
+        form.d_guesses = print_guesses(self, self.history)
         return form
 
     def game_end(self, won):
@@ -72,13 +73,21 @@ class Game(ndb.Model):
 
     def history_to_form(self):
         """Returns an array of move forms"""
+
         history = ""
+        move_list = []
+
         for guess in self.history:
-            form = MoveForm()
-            form.guess = guess
-            form.result = if guess in self.target
-            form.progress = # TODO finish this up
-        return history
+            form = GameForm()
+            form.a_key = self.key.urlsafe()
+            history += guess
+            form.b_status = "You have " + \
+                str(6 - len(print_guesses(self, history).replace("Guessed: ", "").replace(" ", ""))) + \
+                " guesses remaining!"
+            form.c_spaces = print_spaces(self, history)
+            form.d_guesses = print_guesses(self, history)
+            move_list.append(form)
+        return move_list
 
 
 class StringMessage(messages.Message):
@@ -112,11 +121,4 @@ class ScoreTable(messages.Message):
 
 class HistoryMessage(messages.Message):
     """Message for holding move forms"""
-    history = messages.MessageField(MoveForm, 1, repeated=True)
-
-
-class MoveForm(messages.Message):
-    """Form representation of a move"""
-    guess = messages.StringField(1, required=True)
-    result = messages.BooleanField(2, required=True)
-    progress = messages.StringField(3, required=True)
+    history = messages.MessageField(GameForm, 1, repeated=True)

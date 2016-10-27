@@ -17,13 +17,15 @@ def str_match(history, target):
 def guess(game, letter):
     """Game guessing logic"""
     if len(letter) > 1 and letter != game.target:
-        raise endpoints.BadRequestException("Wrong answer. This guess does not count against you. Continue guessing!")
+        raise endpoints.BadRequestException(
+            "Wrong answer. This guess does not count against you. Continue guessing!")
     if letter == game.target:
         game.game_end(True)
     if letter in game.history:
         raise endpoints.BadRequestException("You already guessed that")
-    if not letter.isAlpha():
-        raise endpoints.BadRequestException("You cannot guess special characters")
+    if not letter.isalpha():
+        raise endpoints.BadRequestException(
+            "You cannot guess special characters")
     else:
         game.history += letter
         if letter in game.target:
@@ -64,23 +66,23 @@ def get_status(game):
         return "Keep guessing, you have " + str(game.remaining_attempts) + " guesses left."
 
 
-def print_guesses(game):
+def print_guesses(game, history):
     """Returns the guesses up to this point"""
     returnStr = "Guessed: "
-    for c in game.history:
+    for c in history:
         if c not in game.target:
             returnStr += c + " "
     return returnStr
 
 
-def print_spaces(game):
+def print_spaces(game, history):
     """Prints the blank spaces left during your game"""
     returnStr = ""
     for c in game.target:
         if c == " ":
             returnStr += "  "
         else:
-            if c in game.target and c in game.history:
+            if c in game.target and c in history:
                 returnStr += c
             else:
                 returnStr += "_ "

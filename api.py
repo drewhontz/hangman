@@ -4,10 +4,10 @@
 """ Creation of the Hangman API. """
 import endpoints
 from protorpc import remote, messages
-from game import guess
+from game import guess, random_word
 from utils import get_by_urlsafe
 from model import (User, Game, Score,
-                   StringMessage, GameForm, GameList, ScoreTable)
+                   StringMessage, GameForm, GameList, ScoreTable, HistoryMessage)
 
 USER_REQUEST = endpoints.ResourceContainer(
     user_name=messages.StringField(1),
@@ -20,7 +20,9 @@ MOVE_REQUEST = endpoints.ResourceContainer(
 NEW_GAME_REQUEST = endpoints.ResourceContainer(
     user_name=messages.StringField(1))
 GAME_REQUEST = endpoints.ResourceContainer(key=messages.StringField(1))
-SCORE_REQUEST = endpoints.ResourceContainer(number_of_results=messages.IntegerField(1))
+SCORE_REQUEST = endpoints.ResourceContainer(
+    number_of_results=messages.IntegerField(1))
+
 
 @endpoints.api(name='hangman', version='v1')
 class HangmanAPI(remote.Service):
