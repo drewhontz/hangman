@@ -59,6 +59,9 @@ class HangmanAPI(remote.Service):
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
         if game.over == True:
             raise endpoints.BadRequestException("GAME HAS ENDED")
+        if not request.guess:
+            raise endpoints.BadRequestException(
+                "You must guess a letter, word, or phrase")
         guess(game, request.guess)
         return game.to_form()
 
@@ -66,8 +69,12 @@ class HangmanAPI(remote.Service):
                       http_method="GET", name="get_high_scores")
     def get_high_scores(self, request):
         """Returns a list of the high scores"""
-        if request.number_of_results:
-            scores = Score.query(limit=number_of_results).order(-Score.score)
+        limit = request.number_of_results
+        if limit and limit < 0:
+            raise endpoints.BadRequestException(
+                "Please request a positive number of results")
+        if limit and limit > 0:
+            scores = Score.query().order(-Score.score).fetch(limit=limit)
         else:
             scores = Score.query().order(-Score.score)
         return ScoreTable(items=[score.to_form() for score in scores])
@@ -123,6 +130,8 @@ class HangmanAPI(remote.Service):
     def get_game_history(self, request):
         """Returns a list of the users guesses"""
         game = get_by_urlsafe(request.key, Game)
+        if not game:
+            raise endpoints.NotFoundException("Game does not exist")
         moves = game.history_to_form()
         return HistoryMessage(history=[move for move in moves])
 

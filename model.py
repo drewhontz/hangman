@@ -63,8 +63,8 @@ class Game(ndb.Model):
         user = self.user_name.get().user_name
 
         wins = Score.query(Score.user_name == self.user_name).count()
-        losses = Game.query().filter(
-            Game.won == False and Game.remaining_attempts == 0).count()
+        losses = Game.query().filter(Game.user_name == self.user_name).filter(
+            Game.remaining_attempts == 0).count()
         diff = wins - losses
 
         form.user_name = user

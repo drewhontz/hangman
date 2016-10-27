@@ -16,13 +16,14 @@ Hangman is a simple letter guessing game. Each game begins with a random 'target
 
 ## Scoring
 
-Hangman has two forms of scoring, single game scores and user rankings. Your  single game score is the number of remaining guesses when a user wins a game; no score is recorded if the user fails to guess the target in fewer than 6 guesses. For user rankings, users are ranked by the difference between their number of wins and losses. EX: User "Drew" has 5 wins and 2 losses, his ranking score is 3. The higher the ranking (compared to other users) the higher a user will place on the scoreboard.
+Hangman has two forms of scoring, single game scores and user rankings. Your single game score is the number of remaining guesses when a user wins a game; no score is recorded if the user fails to guess the target in fewer than 6 guesses. For user rankings, users are ranked by the difference between their number of wins and losses. EX: User "Drew" has 5 wins and 2 losses, his ranking score is 3\. The higher the ranking (compared to other users) the higher a user will place on the scoreboard.
 
 ## How to Play
+
 - Create a user account with the create_user endpoint
-- Create a new game with the create_game endpoint
-- Copy the game key returned with the create_game request
-- Paste the game key in the key field in the "guess_a_letter" endpoint and pick a letter to guess
+- Create a new game with your username in the create_game endpoint
+- Copy the game key included in the response from the create_game request
+- Paste the game key in the key field in the "guess_a_letter" endpoint and pick a letter to guess. Users can also guess at the whole word or phrase without penalty
 - Repeat until the target is guessed or you exhaust your 6 attempts.
 - [OPTIONAL] Open games can be canceled with the cancel_game endpoint.
 - [OPTIONAL] User scores and leaderboards can be viewed with the user_score and get_high_scores endpoints respectively.
@@ -41,6 +42,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
 ## Endpoints Included:
 
 - **create_user**
+
   - Path: 'user'
   - Method: POST
   - Parameters: user_name, email (optional)
@@ -48,6 +50,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Creates a new User. user_name provided must be unique. Will raise a ConflictException if a User with that user_name already exists.
 
 - **create_game**
+
   - Path: 'game'
   - Method: POST
   - Parameters: user_name
@@ -55,6 +58,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Creates a new Game. user_name provided must correspond to an existing user - will raise a NotFoundException if not.
 
 - **guess_a_letter**
+
   - Path: 'game/{urlsafe_game_key}'
   - Method: PUT
   - Parameters: urlsafe_game_key, guess
@@ -62,13 +66,15 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Accepts a 'guess' and returns the updated state of the game. If this results in winning a game, a corresponding Score entity will be created.
 
 - **get_high_scores**
+
   - Path: 'scores'
   - Method: GET
-  - Parameters: n/a
-  - Returns: GameForm with current game state.
-  - Description: Returns all Scores in the database ordered from high to low.
+  - Parameters: number_of_results (optional)
+  - Returns: A ScoreTable message with users wins-losses differential
+  - Description: Returns the leaderboards with user's ranked by wins-losses
 
 - **get_user_scores**
+
   - Path: 'scores/{user_name}'
   - Method: GET
   - Parameters: user_name
@@ -76,6 +82,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Returns all Scores recorded by the provided player (unordered). Will raise a NotFoundException if the User does not exist.
 
 - **get_user_games**
+
   - Path: 'game/{user_name}'
   - Method: GET
   - Parameters: user_name
@@ -83,6 +90,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Retrieves all the active games for the provided user
 
 - **cancel_game**
+
   - Path: 'game/delete/{key}'
   - Method: DELETE
   - Parameters: key
@@ -90,6 +98,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: When given a urlsafe_game_key, this endpoint will delete the corresponding game
 
 - **get_user_rankings**
+
   - Path: 'rankings'
   - Method: GET
   - Parameters: n/a
@@ -97,6 +106,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
   - Description: Returns an ordered list of users, ranked from highest win-loss differential to lowest.
 
 - **get_game_history**
+
   - Path: 'game/history/{key}'
   - Method: GET
   - Parameters: key
@@ -140,3 +150,7 @@ Hangman has two forms of scoring, single game scores and user rankings. Your  si
 - **ScoreTable**
 
   - Multiple ScoreForm container.
+
+- **HistoryMessage**
+
+  - A group of GameForms with updated Game state after each guess
